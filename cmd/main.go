@@ -1,23 +1,41 @@
 package main
 
 import (
-	"log"
-	"os"
+	"net"
+	"time"
 
-	export "github.com/siangyeh8818/golang.exporter.templeate/internal"
+	"github.com/patrickmn/go-cache"
+
+	crawler "github.com/siangyeh8818/golang.exporter.XZCOM/internal/crawler"
+	server "github.com/siangyeh8818/golang.exporter.XZCOM/internal/server"
 )
 
 func main() {
-	log.Println("Exporter is start ro running")
-	nats_ip_env := os.Getenv("NATS_IP")
-	if nats_ip_env == "" {
-		nats_ip_env = "nats"
+
+	c := cache.New(5*time.Minute, 10*time.Minute)
+
+	c.Set("foo", "bar", cache.DefaultExpiration)
+
+	go func() {
+		crawler.RunSelium()
+	}()
+
+	server.Run_Exporter_Server()
+}
+
+func PickUnusedPort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0, err
 	}
-	log.Printf("NATS_IP : %s \n", nats_ip_env)
-	nats_port_env := os.Getenv("NATS_PORT")
-	if nats_port_env == "" {
-		nats_port_env = "8222"
+
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
 	}
-	log.Printf("NATS_PORT : %s \n", nats_port_env)
-	export.Run_Exporter_Server()
+	port := l.Addr().(*net.TCPAddr).Port
+	if err := l.Close(); err != nil {
+		return 0, err
+	}
+	return port, nil
 }

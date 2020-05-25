@@ -1,9 +1,15 @@
-package selenium
+package crawler
 
 import (
+	"fmt"
+	"log"
 	"net"
 	"os"
+	"strconv"
 	"time"
+
+	"github.com/tebeka/selenium"
+	"github.com/tebeka/selenium/chrome"
 )
 
 func CallSelium() {
@@ -11,7 +17,8 @@ func CallSelium() {
 
 	for {
 		RunSelium()
-		time.Sleep(int,err:=strconv.Atoi(os.Getenv("SELEIUM_INTERNAL_TIME")) * time.Second)
+		internaltime, _ := strconv.Atoi(os.Getenv("SELEIUM_INTERNAL_TIME"))
+		time.Sleep(time.Duration(internaltime) * time.Second)
 	}
 }
 
@@ -115,7 +122,6 @@ func RunSelium() {
 	defer w_b1.Close()
 	return
 }
-
 
 func PickUnusedPort() (int, error) {
 	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:0")
