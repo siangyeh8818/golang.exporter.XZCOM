@@ -17,14 +17,16 @@ COPY internal /go/src/github.com/siangyeh8818/golang.exporter.XZCOM/internal
 RUN env GOOS=linux GOARCH=amd64 go build -o xzcom-exporter -v -ldflags "-s" github.com/siangyeh8818/golang.exporter.XZCOM/cmd/
 
 ##### To reduce the final image size, start a new stage with alpine from scratch #####
-FROM alpine:3.9
-RUN apk --no-cache add ca-certificates libc6-compat google-chrome-stable wget
+FROM centos:7
+
+COPY google.repo /etc/yum.repos.d/
+RUN yum update & yum install -y google-chrome-stable git epel-release
 
 # Run as root
 WORKDIR /root/
 
-COPY chromedriver /usr/local/share/
-RUN chmod +x /usr/local/share/chromedriver
+COPY chromedriver /usr/local/bin/
+RUN chmod +x /usr/local/bin/chromedriver
 # Copy the pre-built binary file from the previous stage
 COPY --from=builder /go/src/github.com/siangyeh8818/golang.exporter.XZCOM/xzcom-exporter /usr/local/bin/xzcom-exporter
 

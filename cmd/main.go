@@ -19,7 +19,7 @@ func main() {
 	*/
 
 	go func() {
-		crawler.RunSelium()
+		crawler.CallSelium()
 	}()
 
 	server.Run_Exporter_Server()

@@ -28,4 +28,4 @@ spec:
         - name: Account_PASSWORD
           value: "INPUT YOUR KEY"
         - name: SELEIUM_INTERNAL_TIME
-          value: "300"
+          value: "180m"

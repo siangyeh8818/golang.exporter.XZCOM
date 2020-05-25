@@ -53,7 +53,7 @@ func Run_Exporter_Server() {
 func NewExporter(metricsPrefix string) *Exporter {
 	account_balance := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: metricsPrefix,
-		Name:      "metrics1",
+		Name:      "account_balance",
 		Help:      "This is a gauge metric example"})
 
 	/*
@@ -73,7 +73,7 @@ func NewExporter(metricsPrefix string) *Exporter {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	//e.gauge.Set(float64(100))
 
-	e.account_balance.Set(GetCsvContent("/root/output.csv"))
+	e.account_balance.Set(GetCsvContent("output.csv"))
 
 	//e.gaugeVec.WithLabelValues("hello").Set(float64(0))
 	e.account_balance.Collect(ch)

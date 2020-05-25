@@ -8,21 +8,24 @@ import (
 	"strconv"
 	"time"
 
+	tool "github.com/siangyeh8818/golang.exporter.XZCOM/internal/tool"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )
 
 func CallSelium() {
 	log.Println("---------------------CallSelium()---------------------")
-
 	for {
-		RunSelium()
-		internaltime, _ := strconv.Atoi(os.Getenv("SELEIUM_INTERNAL_TIME"))
-		time.Sleep(time.Duration(internaltime) * time.Second)
+		balance := RunSelium()
+		log.Println("---------------------write balance tp out.csv---------------------")
+		tool.WriteWithIoutil("output.csv", balance)
+		internal_time, _ := time.ParseDuration(os.Getenv("SELEIUM_INTERNAL_TIME"))
+		//internal_time, _ := strconv.Atoi(os.Getenv("SELEIUM_INTERNAL_TIME"))
+		time.Sleep(time.Duration(internal_time))
 	}
 }
 
-func RunSelium() {
+func RunSelium() string {
 
 	const (
 		seleniumPath = `/usr/local/bin/chromedriver`
@@ -44,7 +47,7 @@ func RunSelium() {
 	service, err := selenium.NewChromeDriverService(seleniumPath, port, opts...)
 	if nil != err {
 		fmt.Println("start a chromedriver service falid", err.Error())
-		return
+		//return
 	}
 	//注意這裡，server關閉之後，chrome視窗也會關閉
 	defer service.Stop()
@@ -77,7 +80,7 @@ func RunSelium() {
 	w_b1, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
 	if err != nil {
 		fmt.Println("connect to the webDriver faild", err.Error())
-		return
+		//return
 	}
 	//關閉一個webDriver會對應關閉一個chrome視窗
 	//但是不會導致seleniumServer關閉
@@ -85,7 +88,7 @@ func RunSelium() {
 	err = w_b1.Get("https://www.xz.com/user/login?return_url=%2F")
 	if err != nil {
 		fmt.Println("get page faild", err.Error())
-		return
+		//return
 	}
 	//driver.findElement(By.xpath("//input[@id='gh-ac']")).sendKeys("Guitar");
 	//elementID = driver.findElement(By.id("exampleInputAmount")).sendKeys("Guitar")
@@ -105,12 +108,13 @@ func RunSelium() {
 	err = w_b1.Get("https://www.xz.com/user/index")
 	if err != nil {
 		fmt.Println("get page faild", err.Error())
-		return
+		//return
 	}
 	webelement4, _ := w_b1.FindElement(selenium.ByClassName, "amounts-total-money")
 	amountstotalmoney, _ := webelement4.Text()
 	//fmt.Printf("amounts-total-money : %s", amountstotalmoney)
 	f_amountstotalmoney, _ := strconv.ParseFloat(amountstotalmoney, 64)
+	log.Println("-------amountstotalmoney----------")
 	log.Println(f_amountstotalmoney)
 	/*
 		webelement5, _ := w_b1.FindElement(selenium.ByClassName, "user-quick-link")
@@ -120,7 +124,7 @@ func RunSelium() {
 	*/
 	defer w_b1.Quit()
 	defer w_b1.Close()
-	return
+	return amountstotalmoney
 }
 
 func PickUnusedPort() (int, error) {
