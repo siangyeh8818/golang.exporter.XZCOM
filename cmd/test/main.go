@@ -1,29 +1,26 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net"
+	"os"
+	"strconv"
+	"time"
 
-	crawler "github.com/siangyeh8818/golang.exporter.XZCOM/internal/crawler"
+	"github.com/tebeka/selenium"
+	"github.com/tebeka/selenium/chrome"
+
 	server "github.com/siangyeh8818/golang.exporter.XZCOM/internal/server"
+	selenium "github.com/siangyeh8818/golang.exporter.XZCOM/internal/selenium"
 )
 
 func main() {
-
-	/*
-		c := cache.New(5*time.Minute, 10*time.Minute)
-
-		c.Set("account_balance", 0.0, cache.DefaultExpiration)
-		var newcache *structs.Mycache
-
-		newcache.New(c)
-	*/
-
-	go func() {
-		crawler.RunSelium()
+	go func{
+		selenium.RunSelium()
 	}()
 
 	server.Run_Exporter_Server()
-
 }
 
 func PickUnusedPort() (int, error) {

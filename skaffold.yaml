@@ -2,7 +2,7 @@ apiVersion: skaffold/v1beta10
 kind: Config
 build:
   artifacts:
-  - image: siangyeh8818/exporter-template
+  - image: siangyeh8818/xzcom-exporter
     context: .
     docker:
-      dockerfile: build/package/Dockerfile
+      dockerfile: build/xzcom/Dockerfile
